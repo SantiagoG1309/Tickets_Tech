@@ -10,14 +10,14 @@
         <div class="col-md-8 col-lg-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Iniciar :) Sesión</h4>
+                    <h4 class="mb-0">Iniciar Sesión</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
                         {{ form|crispy }}
                         <div class="d-grid gap-2 mt-4">
-                            <button class="btn btn-primary" type="submit">Iniciar:) Sesión</button>
+                            <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
                         </div>
                     </form>
                     <div class="mt-3 text-center">
