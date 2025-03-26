@@ -8,7 +8,12 @@ class TicketForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(attrs={'rows': 5}),
         }
-
+        labels = {
+            'description': 'Descripción',
+            'category': 'Categoría',
+            'priority': 'Prioridad',
+            'title': 'Título',
+        }
 class TicketUpdateForm(forms.ModelForm):
     class Meta:
         model = Ticket
