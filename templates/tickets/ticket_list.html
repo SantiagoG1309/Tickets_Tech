@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Tickets - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Lista de Tickets</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'create_ticket' %}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Ticket</a>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="GET" class="d-flex">
+                        <input type="text" name="search" class="form-control me-2" placeholder="Buscar tickets..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <a href="{% url 'ticket_list' %}" class="btn btn-outline-secondary {% if not status_filter %}active{% endif %}">Todos</a>
+                        <a href="{% url 'ticket_list' %}?status=OPEN" class="btn btn-outline-info {% if status_filter == 'OPEN' %}active{% endif %}">Abiertos</a>
+                        <a href="{% url 'ticket_list' %}?status=IN_PROGRESS" class="btn btn-outline-warning {% if status_filter == 'IN_PROGRESS' %}active{% endif %}">En Proceso</a>
+                        <a href="{% url 'ticket_list' %}?status=RESOLVED" class="btn btn-outline-success {% if status_filter == 'RESOLVED' %}active{% endif %}">Resueltos</a>
+                        <a href="{% url 'ticket_list' %}?status=CLOSED" class="btn btn-outline-secondary {% if status_filter == 'CLOSED' %}active{% endif %}">Cerrados</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de Tickets -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Título</th>
+                            <th>Creado por</th>
+                            <th>Categoría</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Creado por</th>
+                            <!-- Se eliminó el encabezado de asignación de tickets -->
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.title }}</a></td>
+                            <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
+                            <td>{{ ticket.get_category_display }}</td>
+                            <td>
+                                {% if ticket.priority == 'HIGH' %}
+                                <span class="badge bg-danger">{{ ticket.get_priority_display }}</span>
+                                {% elif ticket.priority == 'MEDIUM' %}
+                                <span class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</span>
+                                {% else %}
+                                <span class="badge bg-success">{{ ticket.get_priority_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ticket.status == 'OPEN' %}
+                                <span class="badge bg-info">{{ ticket.get_status_display }}</span>
+                                {% elif ticket.status == 'IN_PROGRESS' %}
+                                <span class="badge bg-warning text-dark">{{ ticket.get_status_display }}</span>
+                                {% elif ticket.status == 'RESOLVED' %}
+                                <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
+                            <!-- Se eliminó la columna de asignación de tickets -->
+                            <td>{{ ticket.created_at|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No hay tickets disponibles</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

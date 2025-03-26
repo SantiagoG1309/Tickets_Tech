@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Dashboard de Administración</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'create_ticket' %}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Ticket</a>
+        </div>
+    </div>
+    
+    <!-- Resumen de Tickets -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total de Tickets</h6>
+                            <h2 class="mb-0">{{ total_tickets }}</h2>
+                        </div>
+                        <i class="fas fa-ticket-alt fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Abiertos</h6>
+                            <h2 class="mb-0">{{ open_tickets }}</h2>
+                        </div>
+                        <i class="fas fa-folder-open fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">En Proceso</h6>
+                            <h2 class="mb-0">{{ in_progress_tickets }}</h2>
+                        </div>
+                        <i class="fas fa-spinner fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Resueltos</h6>
+                            <h2 class="mb-0">{{ resolved_tickets }}</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráficos y Estadísticas -->
+    <div class="row">
+        <!-- Tickets por Estado -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Tickets por Estado</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tickets por Prioridad -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Tickets por Prioridad</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="priorityChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tickets por Categoría -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Tickets por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumen Numérico -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Resumen Detallado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Prioridad -->
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2">Por Prioridad</h6>
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="p-3 border rounded mb-2 bg-danger bg-opacity-10">
+                                        <h3 class="text-danger">{{ high_priority }}</h3>
+                                        <p class="mb-0">Urgente</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 border rounded mb-2 bg-warning bg-opacity-10">
+                                        <h3 class="text-warning">{{ medium_priority }}</h3>
+                                        <p class="mb-0">Medio</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 border rounded mb-2 bg-success bg-opacity-10">
+                                        <h3 class="text-success">{{ low_priority }}</h3>
+                                        <p class="mb-0">Bajo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Categoría -->
+                        <div class="col-md-8">
+                            <h6 class="border-bottom pb-2">Por Categoría</h6>
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="p-3 border rounded mb-2 bg-primary bg-opacity-10">
+                                        <h3 class="text-primary">{{ technical_tickets }}</h3>
+                                        <p class="mb-0">Soporte Técnico</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 border rounded mb-2 bg-info bg-opacity-10">
+                                        <h3 class="text-info">{{ billing_tickets }}</h3>
+                                        <p class="mb-0">Facturación</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 border rounded mb-2 bg-secondary bg-opacity-10">
+                                        <h3 class="text-secondary">{{ general_tickets }}</h3>
+                                        <p class="mb-0">General</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 border rounded mb-2 bg-dark bg-opacity-10">
+                                        <h3 class="text-dark">{{ other_tickets }}</h3>
+                                        <p class="mb-0">Otro</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabla de Tickets Recientes -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Tickets Recientes</h5>
+                    <div class="d-flex">
+                        <div class="btn-group me-2">
+                            <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-secondary {% if not status_filter %}active{% endif %}">Todos</a>
+                            <a href="{% url 'dashboard' %}?status=OPEN" class="btn btn-sm btn-outline-info {% if status_filter == 'OPEN' %}active{% endif %}">Abiertos</a>
+                            <a href="{% url 'dashboard' %}?status=IN_PROGRESS" class="btn btn-sm btn-outline-warning {% if status_filter == 'IN_PROGRESS' %}active{% endif %}">En Proceso</a>
+                            <a href="{% url 'dashboard' %}?status=RESOLVED" class="btn btn-sm btn-outline-success {% if status_filter == 'RESOLVED' %}active{% endif %}">Resueltos</a>
+                            <a href="{% url 'dashboard' %}?status=CLOSED" class="btn btn-sm btn-outline-secondary {% if status_filter == 'CLOSED' %}active{% endif %}">Cerrados</a>
+                        </div>
+                        <a href="{% url 'ticket_list' %}" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Título</th>
+                                    <th>Categoría</th>
+                                    <th>Prioridad</th>
+                                    <th>Estado</th>
+                                    <th>Creado por</th>
+                                    <!-- Se eliminó el encabezado de asignación de tickets -->
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets|slice:":10" %}
+                                <tr>
+                                    <td>{{ ticket.id }}</td>
+                                    <td>{{ ticket.title }}</td>
+                                    <td>{{ ticket.get_category_display }}</td>
+                                    <td>
+                                        {% if ticket.priority == 'HIGH' %}
+                                        <span class="badge bg-danger">{{ ticket.get_priority_display }}</span>
+                                        {% elif ticket.priority == 'MEDIUM' %}
+                                        <span class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</span>
+                                        {% else %}
+                                        <span class="badge bg-success">{{ ticket.get_priority_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ticket.status == 'OPEN' %}
+                                        <span class="badge bg-info">{{ ticket.get_status_display }}</span>
+                                        {% elif ticket.status == 'IN_PROGRESS' %}
+                                        <span class="badge bg-warning text-dark">{{ ticket.get_status_display }}</span>
+                                        {% elif ticket.status == 'RESOLVED' %}
+                                        <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
+                                    <!-- Se eliminó la columna de asignación de tickets -->
+                                    <td>{{ ticket.created_at|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">No hay tickets disponibles</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js para gráficos interactivos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico de tickets por estado
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Abiertos', 'En Proceso', 'Resueltos', 'Cerrados'],
+            datasets: [{
+                data: [{{ open_tickets }}, {{ in_progress_tickets }}, {{ resolved_tickets }}, {{ closed_tickets }}],
+                backgroundColor: [
+                    'rgba(23, 162, 184, 0.8)',  // Info (Abiertos)
+                    'rgba(255, 193, 7, 0.8)',  // Warning (En Proceso)
+                    'rgba(40, 167, 69, 0.8)',  // Success (Resueltos)
+                    'rgba(108, 117, 125, 0.8)'  // Secondary (Cerrados)
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+    
+    // Gráfico de tickets por prioridad
+    const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+    const priorityChart = new Chart(priorityCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Urgente', 'Medio', 'Bajo'],
+            datasets: [{
+                label: 'Tickets por Prioridad',
+                data: [{{ high_priority }}, {{ medium_priority }}, {{ low_priority }}],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.8)',  // Danger (Urgente)
+                    'rgba(255, 193, 7, 0.8)',  // Warning (Medio)
+                    'rgba(40, 167, 69, 0.8)'   // Success (Bajo)
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+    
+    // Gráfico de tickets por categoría
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Soporte Técnico', 'Facturación', 'General', 'Otro'],
+            datasets: [{
+                data: [{{ technical_tickets }}, {{ billing_tickets }}, {{ general_tickets }}, {{ other_tickets }}],
+                backgroundColor: [
+                    'rgba(13, 110, 253, 0.8)',  // Primary (Soporte Técnico)
+                    'rgba(23, 162, 184, 0.8)',  // Info (Facturación)
+                    'rgba(108, 117, 125, 0.8)', // Secondary (General)
+                    'rgba(52, 58, 64, 0.8)'     // Dark (Otro)
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

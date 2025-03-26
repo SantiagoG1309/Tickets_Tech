@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Crear Superadministrador - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Crear Nuevo Superadministrador</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'user_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <h5>Información de Usuario</h5>
+                                {{ user_form|crispy }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h5>Información de Superadministrador</h5>
+                                {{ system_admin_form|crispy }}
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-user-cog"></i> Crear Superadministrador
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

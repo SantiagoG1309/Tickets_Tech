@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Mi Perfil - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Mi Perfil</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if user.role == 'SYSTEM_ADMIN' %}
+            <a href="{% url 'create_admin' %}" class="btn btn-success me-2"><i class="fas fa-user-shield"></i> Crear Administrador</a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Confirmar Eliminación</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'user_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">¿Estás seguro de que deseas eliminar este usuario?</h5>
+                    <p class="card-text">Estás a punto de eliminar al usuario <strong>{{ user_to_delete.username }}</strong> ({{ user_to_delete.get_full_name|default:user_to_delete.username }}).</p>
+                    <p class="card-text">Esta acción no se puede deshacer y eliminará todos los datos asociados a este usuario.</p>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'user_list' %}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar Usuario</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

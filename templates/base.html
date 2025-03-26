@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Tickets{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .ticket-card {
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .priority-high {
+            border-left: 5px solid #dc3545;
+        }
+        .priority-medium {
+            border-left: 5px solid #ffc107;
+        }
+        .priority-low {
+            border-left: 5px solid #28a745;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Sistema de Tickets</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ticket_list' %}">Tickets</a>
+                    </li>
+                    {% if user.role == 'SYSTEM_ADMIN' %}
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="{% url 'create_admin' %}"><i class="fas fa-user-shield"></i> Crear Admin</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="{% url 'create_system_admin' %}"><i class="fas fa-user-cog"></i> Crear Superadmin</a>
+                    </li>
+                    {% elif user.role == 'ADMIN' %}
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="{% url 'create_admin' %}"><i class="fas fa-user-shield"></i> Crear Admin</a>
+                    </li>
+                    {% endif %}
+                    {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="{% url 'create_employee' %}"><i class="fas fa-user-plus"></i> Crear Empleado</a>
+                    </li>
+                    {% endif %}
+                    {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_list' %}">Usuarios</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Registrarse</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/tickets/' in request.path %}active{% endif %}" href="{% url 'ticket_list' %}">
+                                <i class="fas fa-ticket-alt"></i> Mis Tickets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'create_ticket' %}">
+                                <i class="fas fa-plus-circle"></i> Crear Ticket
+                            </a>
+                        </li>
+                        {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/dashboard/' in request.path %}active{% endif %}" href="{% url 'dashboard' %}">
+                                <i class="fas fa-chart-bar"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/users/' in request.path %}active{% endif %}" href="{% url 'user_list' %}">
+                                <i class="fas fa-users"></i> Gestión de Usuarios
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <!-- Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            {% else %}
+            <!-- Content (Full width when not logged in) -->
+            <main class="col-12 main-content">
+            {% endif %}
+                <!-- Messages -->
+                {% if messages %}
+                <div class="messages mt-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">Sistema de Gestión de Tickets &copy; {% now "Y" %}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

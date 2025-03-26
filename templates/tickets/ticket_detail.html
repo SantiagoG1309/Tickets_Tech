@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% load status_display %}
+
+{% block title %}Ticket #{{ ticket.id }} - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Encabezado del Ticket -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">
+                Ticket #{{ ticket.id }}: {{ ticket.title }}
+                {% if ticket.priority == 'HIGH' %}
+                <span class="badge bg-danger ms-2">{{ ticket.get_priority_display }}</span>
+                {% elif ticket.priority == 'MEDIUM' %}
+                <span class="badge bg-warning text-dark ms-2">{{ ticket.get_priority_display }}</span>
+                {% else %}
+                <span class="badge bg-success ms-2">{{ ticket.get_priority_display }}</span>
+                {% endif %}
+            </h2>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if user == ticket.created_by or user.role == 'ADMIN' or user.role == 'SYSTEM_ADMIN' %}
+            <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-primary"><i class="fas fa-edit"></i> Actualizar Ticket</a>
+            {% endif %}
+            <a href="{% url 'ticket_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Detalles del Ticket -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Detalles del Ticket</h5>
+                    <span>
+                        {% if ticket.status == 'OPEN' %}
+                        <span class="badge bg-info">{{ ticket.get_status_display }}</span>
+                        {% elif ticket.status == 'IN_PROGRESS' %}
+                        <span class="badge bg-warning text-dark">{{ ticket.get_status_display }}</span>
+                        {% elif ticket.status == 'RESOLVED' %}
+                        <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Categoría:</div>
+                        <div class="col-md-9">{{ ticket.get_category_display }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Creado por:</div>
+                        <div class="col-md-9">{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</div>
+                    </div>
+                    <!-- Se eliminó la sección de asignación de tickets -->
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Fecha de creación:</div>
+                        <div class="col-md-9">{{ ticket.created_at|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Última actualización:</div>
+                        <div class="col-md-9">{{ ticket.updated_at|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Descripción:</div>
+                        <div class="col-md-9">
+                            <p class="mb-0">{{ ticket.description|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comentarios -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Comentarios ({{ comments.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if comments %}
+                    <div class="comments-list">
+                        {% for comment in comments %}
+                        <div class="comment mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                    <span class="text-muted ms-2 small">{{ comment.created_at|date:"d/m/Y H:i" }}</span>
+                                </div>
+                                <span class="badge {{ comment.user|get_role_color }}">{{ comment.user.get_role_display }}</span>
+                            </div>
+                            <p class="mb-0">{{ comment.content|linebreaks }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay comentarios en este ticket.</p>
+                    {% endif %}
+                    
+                    <!-- Formulario de Comentario -->
+                    <div class="comment-form mt-4">
+                        <h6 class="mb-3">Añadir un comentario</h6>
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ comment_form|crispy }}
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                <button class="btn btn-primary" type="submit">Enviar Comentario</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Historial y Información Adicional -->
+        <div class="col-md-4">
+            <!-- Historial de Cambios -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Historial de Cambios</h5>
+                </div>
+                <div class="card-body">
+                    {% if history %}
+                    <div class="timeline">
+                        {% for entry in history %}
+                        <div class="timeline-item mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">{{ entry.changed_at|date:"d/m/Y H:i" }}</span>
+                                <span class="badge {{ entry.changed_by|get_role_color }}">{{ entry.changed_by.get_role_display }}</span>
+                            </div>
+                            <p class="mb-0">Estado: {{ entry.old_status|get_status_display }} → {{ entry.new_status|get_status_display }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay historial de cambios para este ticket.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
