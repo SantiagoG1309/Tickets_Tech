@@ -7,6 +7,7 @@ pip install -r requirements.txt
 python manage.py collectstatic --noinput
 python manage.py migrate
 
+
 # Crear superusuario automáticamente
 echo "Creando superusuario..."
 DJANGO_SUPERUSER_USERNAME=Kevin \
