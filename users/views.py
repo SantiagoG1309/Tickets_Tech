@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import UserRegisterForm, UserLoginForm, EmployeeCreationForm, AdminCreationForm, SystemAdminCreationForm, UserUpdateForm
-from .models import User, Employee, Admin, SystemAdmin
+from .forms import UserRegisterForm, UserLoginForm, EmployeeCreationForm, AdminCreationForm, SystemAdminCreationForm, UserUpdateForm, TechnicianUserForm
+from .models import User, Employee, Admin, SystemAdmin, Technician
 
 def register(request):
     """View for client registration"""
@@ -30,6 +30,19 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                if user.role == 'TECHNICIAN':
+                    from django.utils import timezone
+                    from tickets.models import Ticket
+                    technician = user.technician_profile
+                    last_login = technician.last_login_at
+                    new_tickets = Ticket.objects.filter(
+                        category=user.assigned_category,
+                        created_at__gt=last_login if last_login else timezone.now()
+                    ).count()
+                    if new_tickets > 0:
+                        messages.info(request, f'Mientras no estuviste se crearon {new_tickets} tickets con tu categoría')
+                    technician.last_login_at = timezone.now()
+                    technician.save()
                 messages.success(request, f'¡Bienvenido, {username}! ({user.get_role_display()})')
                 return redirect('home')
             else:
@@ -42,17 +55,39 @@ def user_login(request):
 
 @login_required
 def profile(request):
-    """View for user profile"""
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Tu perfil ha sido actualizado.')
+            messages.success(request, '¡Tu perfil ha sido actualizado!')
             return redirect('profile')
     else:
         form = UserUpdateForm(instance=request.user)
-    
     return render(request, 'users/profile.html', {'form': form})
+
+@login_required
+def create_technician(request):
+    if not request.user.role in ['ADMIN', 'SYSTEM_ADMIN']:
+        messages.error(request, 'No tienes permiso para crear técnicos')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        form = TechnicianUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.role = 'TECHNICIAN'
+            user.assigned_category = form.cleaned_data['assigned_category']
+            user.save()
+            
+            technician = Technician(user=user)
+            technician.save()
+            
+            messages.success(request, 'Técnico creado exitosamente')
+            return redirect('dashboard')
+    else:
+        form = TechnicianUserForm()
+    
+    return render(request, 'users/create_technician.html', {'form': form})
 
 @login_required
 def user_list(request):

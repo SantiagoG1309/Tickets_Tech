@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Gestionar Categorías</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="category_name">Nombre de la categoría:</label>
+        <input type="text" name="category_name" id="category_name" class="form-control" required>
+    </div>
+    <div class="form-group mt-3">
+        <label for="priority">Prioridad:</label>
+        <select name="priority" id="priority" class="form-control" required>
+            <option value="HIGH">Urgente</option>
+            <option value="MEDIUM">Medio</option>
+            <option value="LOW">Bajo</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Crear Categoría</button>
+</form>
+
+<h3>Categorías existentes</h3>
+<div class="list-group mt-3">
+    {% for category in categories %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        {{ category.name }}
+        <form method="post" class="d-inline" action="{% url 'delete_category' category.id %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?')">
+                <i class="fas fa-trash"></i> Eliminar
+            </button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

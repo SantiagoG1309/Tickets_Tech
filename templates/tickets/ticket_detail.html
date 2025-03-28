@@ -25,6 +25,19 @@
             {% if user == ticket.created_by or user.role == 'ADMIN' or user.role == 'SYSTEM_ADMIN' %}
             <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-primary"><i class="fas fa-edit"></i> Actualizar Ticket</a>
             {% endif %}
+            {% if user.role == 'TECHNICIAN' and ticket.category == user.assigned_category %}
+            <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-warning"><i class="fas fa-edit"></i> Editar Estado</a>
+            {% endif %}
+            {% if user.role == 'TECHNICIAN' and ticket.category in user.technician.assigned_categories.all %}
+                <form method="POST" action="{% url 'update_ticket' ticket.id %}" class="d-inline">
+                    {% csrf_token %}
+                    {% if ticket.status == 'OPEN' %}
+                        <button type="submit" name="status" value="IN_PROGRESS" class="btn btn-warning"><i class="fas fa-play"></i> Iniciar</button>
+                    {% elif ticket.status == 'IN_PROGRESS' %}
+                        <button type="submit" name="status" value="RESOLVED" class="btn btn-success"><i class="fas fa-check"></i> Resolver</button>
+                    {% endif %}
+                </form>
+            {% endif %}
             <a href="{% url 'ticket_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
         </div>
     </div>
@@ -50,7 +63,7 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-3 fw-bold">Categoría:</div>
-                        <div class="col-md-9">{{ ticket.get_category_display }}</div>
+                        <div class="col-md-9">{{ ticket.category.name }}</div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-3 fw-bold">Creado por:</div>

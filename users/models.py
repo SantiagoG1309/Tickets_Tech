@@ -7,8 +7,10 @@ class User(AbstractUser):
         ('EMPLOYEE', 'Empleado'),
         ('ADMIN', 'Administrador'),
         ('SYSTEM_ADMIN', 'Administrador del Sistema'),
+        ('TECHNICIAN', 'Técnico'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='CLIENT')
+    assigned_category = models.ForeignKey('tickets.Category', on_delete=models.SET_NULL, null=True, blank=True, related_name='technicians')
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee_profile')
@@ -29,3 +31,10 @@ class SystemAdmin(models.Model):
     
     def __str__(self):
         return self.user.username
+
+class Technician(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='technician_profile')
+    last_login_at = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.user.assigned_category}"

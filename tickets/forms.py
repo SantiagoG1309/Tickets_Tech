@@ -1,19 +1,31 @@
 from django import forms
-from .models import Ticket, Comment
+from .models import Ticket, Comment, Category
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'priority']
+        labels = {
+            'name': 'Nombre',
+            'priority': 'Prioridad'
+        }
 
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['title', 'description', 'category', 'priority']
+        fields = ['title', 'description', 'category']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 5}),
         }
         labels = {
             'description': 'Descripción',
             'category': 'Categoría',
-            'priority': 'Prioridad',
             'title': 'Título',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.all()
 class TicketUpdateForm(forms.ModelForm):
     class Meta:
         model = Ticket

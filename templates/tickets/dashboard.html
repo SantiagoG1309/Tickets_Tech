@@ -10,6 +10,22 @@
         </div>
         <div class="col-md-4 text-end">
             <a href="{% url 'create_ticket' %}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Ticket</a>
+            {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
+            <a href="{% url 'manage_categories' %}" class="btn btn-success ms-2"><i class="fas fa-tags"></i> Gestionar Categorías</a>
+            <div class="btn-group ms-2">
+                <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-users"></i> Crear Usuario
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'create_technician' %}"><i class="fas fa-user-cog"></i> Crear Técnico</a></li>
+                    <li><a class="dropdown-item" href="{% url 'create_employee' %}"><i class="fas fa-user-tie"></i> Crear Empleado</a></li>
+                    {% if user.role == 'SYSTEM_ADMIN' %}
+                    <li><a class="dropdown-item" href="{% url 'create_admin' %}"><i class="fas fa-user-shield"></i> Crear Administrador</a></li>
+                    <li><a class="dropdown-item" href="{% url 'create_system_admin' %}"><i class="fas fa-user-cog"></i> Crear Superadmin</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
     </div>
     
@@ -69,6 +85,76 @@
         </div>
     </div>
     
+    <!-- Tickets Personales -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Mis Tickets</h5>
+                    <div>
+                        <a href="{% url 'personal_tickets' %}" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Lista de Tickets Personales -->
+                    <div class="row">
+                        {% for ticket in personal_tickets %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card ticket-card priority-{% if ticket.priority == 'HIGH' %}high{% elif ticket.priority == 'MEDIUM' %}medium{% else %}low{% endif %}">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title mb-0">
+                                            <a href="{% url 'ticket_detail' ticket.id %}" class="text-decoration-none">{{ ticket.title }}</a>
+                                        </h5>
+                                        <div>
+                                            {% if ticket.priority == 'HIGH' %}
+                                            <span class="badge bg-danger">{{ ticket.get_priority_display }}</span>
+                                            {% elif ticket.priority == 'MEDIUM' %}
+                                            <span class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</span>
+                                            {% else %}
+                                            <span class="badge bg-success">{{ ticket.get_priority_display }}</span>
+                                            {% endif %}
+                                            
+                                            {% if ticket.status == 'OPEN' %}
+                                            <span class="badge bg-info">{{ ticket.get_status_display }}</span>
+                                            {% elif ticket.status == 'IN_PROGRESS' %}
+                                            <span class="badge bg-warning text-dark">{{ ticket.get_status_display }}</span>
+                                            {% elif ticket.status == 'RESOLVED' %}
+                                            <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">{{ ticket.get_status_display }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="card-text text-muted small mb-2">
+                                        <i class="fas fa-tag me-1"></i> {{ ticket.get_category_display }}
+                                    </p>
+                                    <p class="card-text mb-3">{{ ticket.description|truncatechars:100 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar-alt me-1"></i> {{ ticket.created_at|date:"d/m/Y" }}
+                                        </small>
+                                        <div>
+                                            <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i> Ver</a>
+                                            <a href="{% url 'update_ticket' ticket.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i> Editar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                No has creado ningún ticket aún. <a href="{% url 'create_ticket' %}" class="alert-link">Crea tu primer ticket</a>.
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Gráficos y Estadísticas -->
     <div class="row">
         <!-- Tickets por Estado -->
@@ -144,30 +230,14 @@
                         <div class="col-md-8">
                             <h6 class="border-bottom pb-2">Por Categoría</h6>
                             <div class="row text-center">
+                                {% for category, count in tickets_by_category.items %}
                                 <div class="col-md-3">
                                     <div class="p-3 border rounded mb-2 bg-primary bg-opacity-10">
-                                        <h3 class="text-primary">{{ technical_tickets }}</h3>
-                                        <p class="mb-0">Soporte Técnico</p>
+                                        <h3 class="text-primary">{{ count }}</h3>
+                                        <p class="mb-0">{{ category }}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="p-3 border rounded mb-2 bg-info bg-opacity-10">
-                                        <h3 class="text-info">{{ billing_tickets }}</h3>
-                                        <p class="mb-0">Facturación</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="p-3 border rounded mb-2 bg-secondary bg-opacity-10">
-                                        <h3 class="text-secondary">{{ general_tickets }}</h3>
-                                        <p class="mb-0">General</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="p-3 border rounded mb-2 bg-dark bg-opacity-10">
-                                        <h3 class="text-dark">{{ other_tickets }}</h3>
-                                        <p class="mb-0">Otro</p>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -176,6 +246,69 @@
         </div>
     </div>
     
+    <!-- Scripts para los gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Datos para el gráfico de estado
+        const statusData = {
+            labels: ['Abiertos', 'En Proceso', 'Resueltos', 'Cerrados'],
+            datasets: [{
+                data: [{{ open_tickets }}, {{ in_progress_tickets }}, {{ resolved_tickets }}, {{ closed_tickets }}],
+                backgroundColor: ['#17a2b8', '#ffc107', '#28a745', '#6c757d']
+            }]
+        };
+
+        // Datos para el gráfico de prioridad
+        const priorityData = {
+            labels: ['Urgente', 'Medio', 'Bajo'],
+            datasets: [{
+                data: [{{ high_priority }}, {{ medium_priority }}, {{ low_priority }}],
+                backgroundColor: ['#dc3545', '#ffc107', '#28a745']
+            }]
+        };
+
+        // Datos para el gráfico de categoría
+        const categoryData = {
+            labels: [{% for category, count in tickets_by_category.items %}"{{ category }}",{% endfor %}],
+            datasets: [{
+                data: [{% for category, count in tickets_by_category.items %}{{ count }},{% endfor %}],
+                backgroundColor: ['#007bff', '#17a2b8', '#28a745', '#ffc107', '#dc3545', '#6c757d']
+            }]
+        };
+
+        // Configuración común para los gráficos
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        };
+
+        // Crear los gráficos
+        window.addEventListener('load', function() {
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: statusData,
+                options: commonOptions
+            });
+
+            new Chart(document.getElementById('priorityChart'), {
+                type: 'doughnut',
+                data: priorityData,
+                options: commonOptions
+            });
+
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: categoryData,
+                options: commonOptions
+            });
+        });
+    </script>
+
     <!-- Tabla de Tickets Recientes -->
     <div class="row">
         <div class="col-12 mb-4">
@@ -324,14 +457,20 @@
     const categoryChart = new Chart(categoryCtx, {
         type: 'pie',
         data: {
-            labels: ['Soporte Técnico', 'Facturación', 'General', 'Otro'],
+            labels: [{% for category, count in tickets_by_category.items %}"{{ category }}",{% endfor %}],
             datasets: [{
-                data: [{{ technical_tickets }}, {{ billing_tickets }}, {{ general_tickets }}, {{ other_tickets }}],
+                data: [{% for category, count in tickets_by_category.items %}{{ count }},{% endfor %}],
                 backgroundColor: [
-                    'rgba(13, 110, 253, 0.8)',  // Primary (Soporte Técnico)
-                    'rgba(23, 162, 184, 0.8)',  // Info (Facturación)
-                    'rgba(108, 117, 125, 0.8)', // Secondary (General)
-                    'rgba(52, 58, 64, 0.8)'     // Dark (Otro)
+                    'rgba(255, 99, 132, 0.8)',   // Rosa
+                    'rgba(54, 162, 235, 0.8)',  // Azul
+                    'rgba(255, 206, 86, 0.8)',  // Amarillo
+                    'rgba(75, 192, 192, 0.8)',  // Turquesa
+                    'rgba(153, 102, 255, 0.8)', // Morado
+                    'rgba(255, 159, 64, 0.8)',  // Naranja
+                    'rgba(0, 204, 102, 0.8)',   // Verde
+                    'rgba(255, 0, 255, 0.8)',   // Magenta
+                    'rgba(128, 0, 0, 0.8)',     // Marrón
+                    'rgba(0, 128, 128, 0.8)'    // Verde azulado
                 ],
                 borderWidth: 1
             }]

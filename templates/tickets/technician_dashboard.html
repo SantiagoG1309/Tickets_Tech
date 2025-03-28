@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% load ticket_filters %}
+
+{% block title %}Dashboard de Técnico - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="border-bottom pb-2">Dashboard de Técnico</h2>
+        </div>
+    </div>
+
+    <!-- Categoría Asignada -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-tag"></i> Tu Categoría Asignada</h5>
+                    {% if user.assigned_category %}
+                        <p class="h4 mb-0 text-primary">{{ user.assigned_category.name }}</p>
+                    {% else %}
+                        <p class="h4 mb-0 text-warning">No tienes una categoría asignada</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-bell"></i> Notificaciones</h5>
+                </div>
+                <div class="card-body">
+                    {% if notifications %}
+                        <div class="list-group">
+                            {% for notification in notifications %}
+                                <div class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-info{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                {% if not notification.is_read %}
+                                                    <span class="badge badge-primary">Nuevo</span>
+                                                {% endif %}
+                                                Nuevo ticket en tu categoría
+                                            </h6>
+                                            <p class="mb-1">{{ notification.ticket.title }}</p>
+                                            <small class="text-muted">Creado hace {{ notification.created_at|timesince }}</small>
+                                        </div>
+                                        <div>
+                                            <a href="{% url 'ticket_detail' notification.ticket.id %}" class="btn btn-primary btn-sm">Ver Ticket</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="mb-0">No hay notificaciones nuevas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen de Tickets -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total de Tickets</h6>
+                            <h2 class="mb-0">{{ tickets.count }}</h2>
+                        </div>
+                        <i class="fas fa-ticket-alt fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Abiertos</h6>
+                            <h2 class="mb-0">{{ tickets|filter_status:"status=OPEN"|length }}</h2>
+                        </div>
+                        <i class="fas fa-folder-open fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">En Proceso</h6>
+                            <h2 class="mb-0">{{ tickets|filter_status:"status=IN_PROGRESS"|length }}</h2>
+                        </div>
+                        <i class="fas fa-clock fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Resueltos</h6>
+                            <h2 class="mb-0">{{ tickets|filter_status:"status=RESOLVED"|length }}</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Tickets -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Tickets de tu Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Título</th>
+                                    <th>Creado por</th>
+                                    <th>Categoría</th>
+                                    <th>Prioridad</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>{{ ticket.id }}</td>
+                                    <td>{{ ticket.title }}</td>
+                                    <td>{{ ticket.created_by.get_full_name }}</td>
+                                    <td>{{ ticket.category.name }}</td>
+                                    <td>
+                                        {% if ticket.category.priority == 'HIGH' %}
+                                            <span class="badge bg-danger">Urgente</span>
+                                        {% elif ticket.category.priority == 'MEDIUM' %}
+                                            <span class="badge bg-warning">Medio</span>
+                                        {% elif ticket.category.priority == 'LOW' %}
+                                            <span class="badge bg-success">Bajo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ticket.status == 'OPEN' %}
+                                            <span class="badge bg-info text-white">Abierto</span>
+                                        {% elif ticket.status == 'IN_PROGRESS' %}
+                                            <span class="badge bg-warning text-dark">En proceso</span>
+                                        {% elif ticket.status == 'RESOLVED' %}
+                                            <span class="badge bg-success text-white">Resuelto</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ ticket.created_at|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                                        {% if ticket.status == 'OPEN' %}
+                                            <form method="POST" action="{% url 'update_ticket' ticket.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" name="status" value="IN_PROGRESS" class="btn btn-warning btn-sm">Iniciar</button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">No hay tickets en tu categoría.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
