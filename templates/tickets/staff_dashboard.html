@@ -2,7 +2,7 @@
 
 {% load ticket_filters %}
 
-{% block title %}Dashboard de Personal - Sistema de Tickets{% endblock %}
+{% block title %}Dashboard de {{ user.get_role_display }} {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -13,8 +13,6 @@
         <div class="col-md-4 text-end">
             <a href="{% url 'create_ticket' %}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Ticket</a>
             {% if user.role == 'SYSTEM_ADMIN' %}
-            <a href="{% url 'create_admin' %}" class="btn btn-success ms-2"><i class="fas fa-user-shield"></i> Crear Administrador</a>
-            <a href="{% url 'create_system_admin' %}" class="btn btn-danger ms-2"><i class="fas fa-user-cog"></i> Crear Superadmin</a>
             {% endif %}
         </div>
     </div>

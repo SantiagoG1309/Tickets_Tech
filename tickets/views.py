@@ -66,6 +66,12 @@ def home(request):
     
     return redirect('login')
 
+def home2(request):
+    if not request.user.is_authenticated:
+        return render(request, 'home.html')
+    else:
+        return render(request, 'home2.html')
+    
 @login_required
 def ticket_list(request):
     """View to list all tickets based on user role"""
@@ -74,12 +80,15 @@ def ticket_list(request):
     # Los técnicos solo pueden ver tickets de su categoría
     if user.role == 'TECHNICIAN':
         if user.assigned_category:
-            tickets = Ticket.objects.filter(category=user.assigned_category).order_by('-created_at')
+            all_tickets = Ticket.objects.filter(category=user.assigned_category).order_by('-created_at')
+            personal_tickets = all_tickets
         else:
             messages.warning(request, 'No tienes una categoría asignada.')
-            tickets = Ticket.objects.none()
+            all_tickets = Ticket.objects.none()
+            personal_tickets = Ticket.objects.none()
     else:
-        tickets = Ticket.objects.all().order_by('-created_at')
+        all_tickets = Ticket.objects.all().order_by('-created_at')
+        personal_tickets = Ticket.objects.filter(created_by=user).order_by('-created_at')
     
     # Filter by status if provided
     status_filter = request.GET.get('status', '')
@@ -100,7 +109,7 @@ def ticket_list(request):
         )
     
     return render(request, 'tickets/ticket_list.html', {
-        'tickets': tickets,
+        'tickets': all_tickets,
         'status_filter': status_filter,
         'search_query': search_query
     })

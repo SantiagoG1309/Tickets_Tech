@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Gestionar Categorías</h2>
+<h3>Crear Categorías</h3>
 
 <form method="post">
     {% csrf_token %}
@@ -18,8 +18,9 @@
         </select>
     </div>
     <button type="submit" class="btn btn-primary mt-3">Crear Categoría</button>
+    <br>
 </form>
-
+<br>
 <h3>Categorías existentes</h3>
 <div class="list-group mt-3">
     {% for category in categories %}
@@ -34,5 +35,6 @@
     </div>
     {% endfor %}
 </div>
+<br>
 
 {% endblock %}

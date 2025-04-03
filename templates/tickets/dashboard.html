@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Sistema de Tickets{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -14,7 +14,7 @@
             <a href="{% url 'manage_categories' %}" class="btn btn-success ms-2"><i class="fas fa-tags"></i> Gestionar Categorías</a>
             <div class="btn-group ms-2">
                 <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-users"></i> Crear Usuario
+                    <i class="btn-group ms-2"></i> Crear Usuario
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="{% url 'create_technician' %}"><i class="fas fa-user-cog"></i> Crear Técnico</a></li>

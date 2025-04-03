@@ -30,6 +30,7 @@ class TicketUpdateForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['status']
+        labels={'status':'Estado'}
 
 class CommentForm(forms.ModelForm):
     class Meta:

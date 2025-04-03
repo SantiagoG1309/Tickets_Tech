@@ -2,30 +2,255 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Registro - Sistema de Tickets{% endblock %}
+{% block title %}Registro<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+particlesJS('particles-js', {
+    particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: '#00ffcc' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#00ffcc',
+            opacity: 0.4,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+        }
+    },
+    retina_detect: true
+});
+</script>
+<div id="particles-js"></div>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Registro de Usuario</h4>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <div class="d-grid gap-2 mt-4">
-                            <button class="btn btn-primary" type="submit">Registrarse</button>
+<style>
+    body {
+        overflow-y: auto;
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);
+    }
+
+    #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .auth-container {
+        min-height: calc(100vh - 180px);
+        position: relative;
+        z-index: 2;
+        padding: 2rem 0;
+        animation: fadeIn 0.8s ease-out;
+    
+    .auth-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .auth-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 255, 204, 0.2);
+    }
+    
+    .auth-header {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.9), rgba(0, 186, 255, 0.9));
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .auth-header h4 {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .auth-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+        transition: all 0.3s ease;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(0, 255, 204, 0.5);
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    }
+    
+    .auth-btn {
+        background: linear-gradient(135deg, #00b4db, #0083b0);
+        border: none;
+        padding: 12px 24px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+    }
+    
+    .auth-link {
+        color: #00ffcc;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-link:hover {
+        color: #00ccff;
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 1);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .help-text {
+        color: #ffffff;
+        font-size: 0.875rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        opacity: 0.9;
+    }
+
+    .invalid-feedback {
+        color: #ff9999;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: 500;
+    }
+
+    .form-text {
+        color: #ffffff !important;
+        opacity: 0.9;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .text-muted {
+        color: #ffffff !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Estilo para la barra de desplazamiento */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #00b4db, #0083b0);
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #0083b0, #00b4db);
+    }
+</style>
+
+<div class="auth-container d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h4>Registro en TechSolutions</h4>
+                    </div>
+                    <div class="auth-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn auth-btn" type="submit">Registrarse</button>
+                            </div>
+                        </form>
+                        <div class="mt-4 text-center">
+                            <p class="text-white">¿Ya tienes una cuenta? <a href="{% url 'login' %}" class="auth-link">Inicia sesión aquí</a></p>
                         </div>
-                    </form>
-                    <div class="mt-3 text-center">
-                        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+particlesJS('particles-js', {
+    particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: '#00ffcc' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#00ffcc',
+            opacity: 0.4,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+        }
+    },
+    retina_detect: true
+});
+</script>
+<div id="particles-js"></div>
 {% endblock %}

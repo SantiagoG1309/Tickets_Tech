@@ -1,0 +1,155 @@
+{
+  "prueba": "disponibilidad_sitio",
+  "timestamp": "20250331_184057",
+  "resultados": {
+    "tiempo": 1.600583791732788,
+    "status_code": 200,
+    "content_length": 9929,
+    "headers": {
+      "Date": "Mon, 31 Mar 2025 23:40:56 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "rndr-id": "53c42f66-04d4-4952",
+      "vary": "Cookie, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-render-origin-server": "gunicorn",
+      "cf-cache-status": "DYNAMIC",
+      "Server": "cloudflare",
+      "CF-RAY": "9293b1d6cc75cc72-TPA",
+      "Content-Encoding": "gzip",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    }
+  }
+}
+{
+  "prueba": "carga_recursos_estaticos",
+  "timestamp": "20250331_184104",
+  "resultados": [
+    {
+      "url": "/static/css/main.css",
+      "tiempo": 0.46494555473327637,
+      "status_code": 404
+    },
+    {
+      "url": "/static/js/main.js",
+      "tiempo": 0.19012141227722168,
+      "status_code": 404
+    }
+  ]
+}
+{
+  "prueba": "creacion_ticket",
+  "timestamp": "20250331_184103",
+  "resultados": {
+    "tiempo": 0.43615031242370605,
+    "status_code": 200,
+    "content_length": 15424,
+    "headers": {
+      "Date": "Mon, 31 Mar 2025 23:41:03 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "rndr-id": "1b66cdbb-dec3-404b",
+      "Set-Cookie": "csrftoken=zop3FNhAIA6d5qraTIoKNo6pbA6WQfNc; expires=Mon, 30 Mar 2026 23:41:02 GMT; Max-Age=31449600; Path=/; SameSite=Lax",
+      "vary": "Cookie, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-render-origin-server": "gunicorn",
+      "cf-cache-status": "DYNAMIC",
+      "Server": "cloudflare",
+      "CF-RAY": "9293b1fcaf2b8dca-MIA",
+      "Content-Encoding": "gzip",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    }
+  }
+}
+{
+  "prueba": "carga_dashboard",
+  "timestamp": "20250331_184102",
+  "resultados": {
+    "tiempo": 0.6158711910247803,
+    "status_code": 200,
+    "content_length": 15424,
+    "headers": {
+      "Date": "Mon, 31 Mar 2025 23:41:01 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "rndr-id": "e0dc329d-4c32-4807",
+      "Set-Cookie": "csrftoken=Qojb4Yg61ffQx30dwcAVjoQfESEBUPll; expires=Mon, 30 Mar 2026 23:41:01 GMT; Max-Age=31449600; Path=/; SameSite=Lax",
+      "vary": "Cookie, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-render-origin-server": "gunicorn",
+      "cf-cache-status": "DYNAMIC",
+      "Server": "cloudflare",
+      "CF-RAY": "9293b1f41879cc74-TPA",
+      "Content-Encoding": "gzip",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    }
+  }
+}
+{
+  "prueba": "listado_tickets",
+  "timestamp": "20250331_184102",
+  "resultados": {
+    "tiempo": 0.49322080612182617,
+    "status_code": 200,
+    "content_length": 15424,
+    "headers": {
+      "Date": "Mon, 31 Mar 2025 23:41:02 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "rndr-id": "8bb50fcc-3f9b-47e0",
+      "Set-Cookie": "csrftoken=yhR27Iw4KSrz4o20VGW3xAPXgHnIvrHd; expires=Mon, 30 Mar 2026 23:41:02 GMT; Max-Age=31449600; Path=/; SameSite=Lax",
+      "vary": "Cookie, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-render-origin-server": "gunicorn",
+      "cf-cache-status": "DYNAMIC",
+      "Server": "cloudflare",
+      "CF-RAY": "9293b1f7180925a0-MIA",
+      "Content-Encoding": "gzip",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    }
+  }
+}
+{
+  "prueba": "autenticacion",
+  "timestamp": "20250331_184101",
+  "resultados": {
+    "tiempo": 3.7467031478881836,
+    "status_code": 200,
+    "content_length": 24186,
+    "headers": {
+      "Date": "Mon, 31 Mar 2025 23:41:00 GMT",
+      "Content-Type": "text/html; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "rndr-id": "f2ef958e-fea4-4484",
+      "Set-Cookie": "messages=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; SameSite=Lax",
+      "vary": "Cookie, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-render-origin-server": "gunicorn",
+      "cf-cache-status": "DYNAMIC",
+      "Server": "cloudflare",
+      "CF-RAY": "9293b1ef2dedda8f-MIA",
+      "Content-Encoding": "gzip",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    }
+  }
+}

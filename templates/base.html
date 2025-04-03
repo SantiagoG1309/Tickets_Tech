@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema de Tickets{% endblock %}</title>
-    <!-- Bootstrap CSS -->
+    <title>{% block title %}TechSolutions{% endblock %}</title>
+    <!-- Bootstrap CSS (minimal) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts Google -->
+    <link rel="icon" type="image/jpeg" href="https://i.pinimg.com/736x/6e/34/82/6e348238cb3b6c1a5ec8fc13cc8fcd8d.jpg"> 
+    <!-- Favicon -->
     <style>
+        /* Original Styles (unchanged) */
         .main-content {
             padding: 20px;
         }
@@ -33,38 +38,348 @@
         .status-badge {
             font-size: 0.8rem;
         }
+        .navbar-logo {
+            height: 45px;
+            width: auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 2px rgba(0, 255, 76, 0.4));
+            border-radius: 12%;
+            margin: 0;
+            padding: 0;
+            vertical-align: middle;
+            transform-origin: center;
+        }
+
+        .navbar-logo:hover {
+            transform: scale(1.15) rotate(8deg);
+            filter: drop-shadow(0 0 12px rgba(0, 255, 76, 0.6));
+        }
+    
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            font-size: 0;
+            height: 100%;
+            margin-right: 2rem;
+            margin-left: -15px;
+        }
+        /* Shared Navbar and Footer Styling */
+        .navbar, .footer {
+            background: linear-gradient(to right, rgba(17, 24, 39, 0.95), rgba(28, 35, 51, 0.95)) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 1rem 0;
+            border: none;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .navbar::after, .footer::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(147, 197, 253, 0.3), transparent);
+        }
+        
+        .navbar::after {
+            bottom: 0;
+        }
+        
+        .footer::after {
+            top: 0;
+        }
+    
+        /* Navbar Specific Styling */
+        .navbar {
+            position: sticky;
+            top: 0;
+            animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            min-height: 80px;
+        }
+    
+        /* Footer Specific Styling */
+        .footer {
+            position: relative; /* Footer at the bottom */
+            bottom: 0;
+            animation: slideUp 0.8s ease-out; /* Entrance animation */
+        }
+    
+        /* Text Styling for Both Navbar and Footer */
+        .navbar-text, .footer-text {
+            color: rgba(255, 255, 255, 0.95);
+            font-family: 'Raleway', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        /* Hover Effects for Navbar and Footer */
+        .navbar:hover, .footer:hover {
+            box-shadow: 0 10px 40px rgba(0, 255, 204, 0.5);
+            border-bottom-color: rgba(0, 255, 204, 0.5); /* Navbar */
+            border-top-color: rgba(0, 255, 204, 0.5); /* Footer */
+        }
+    
+        .navbar-text:hover, .footer-text:hover {
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            transform: scale(1.02); /* Subtle zoom on hover */
+        }
+    
+        /* Style for the Navbar Toggler (Hamburger Menu) */
+        .navbar-toggler {
+            border: 2px solid #00ffcc !important;
+            transition: all 0.3s ease;
+        }
+    
+        .navbar-toggler:hover {
+            border-color: #00ccff !important;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+        }
+    
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 255, 204, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+    
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.7rem 1.4rem;
+            margin: 0 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        /* Underline effect on hover */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #60A5FA, #93C5FD);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        
+        /* Hover effect */
+        .nav-link:hover {
+            color: #93C5FD !important;
+            transform: translateY(-2px);
+            background: rgba(147, 197, 253, 0.1);
+            box-shadow: 0 4px 12px rgba(147, 197, 253, 0.15);
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+            opacity: 1;
+        }
+        
+        /* Active state (optional, if you want to style the active link) */
+        .nav-link.active {
+            color: #00ccff !important;
+            text-shadow: 0 0 15px rgba(0, 204, 255, 0.6);
+            background: rgba(0, 204, 255, 0.1);
+            box-shadow: inset 0 0 8px rgba(0, 204, 255, 0.2);
+        }
+
+
+                /* Dropdown Menu Styling to Match Navbar */
+        .dropdown-menu {
+            background: linear-gradient(to right, rgba(17, 24, 39, 0.98), rgba(28, 35, 51, 0.98)) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(147, 197, 253, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.6rem 0;
+            margin-top: 0.5rem;
+        }
+
+        /* Hover Effect for Dropdown Menu */
+        .dropdown-menu:hover {
+            box-shadow: 0 10px 40px rgba(0, 255, 204, 0.5);
+            border-color: rgba(0, 255, 204, 0.5);
+        }
+
+        /* Dropdown Item Styling */
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0.7rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Hover Effect for Dropdown Items */
+        .dropdown-item:hover {
+            color: #00ffcc !important; /* Cyan on hover to match nav-link */
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.7); /* Stronger glow on hover */
+            background: rgba(0, 255, 204, 0.1); /* Subtle background on hover */
+            transform: translateX(5px); /* Slight shift to the right on hover */
+        }
+
+        /* Ensure Icons in Dropdown Items Align Properly */
+        .dropdown-item i {
+            margin-right: 8px; /* Space between icon and text */
+            vertical-align: middle; /* Align with text */
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-item:hover i {
+            transform: scale(1.1); /* Slight zoom on icon hover */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .dropdown-menu {
+                padding: 0.3rem 0;
+            }
+            .dropdown-item {
+                font-size: 0.9rem;
+                padding: 0.4rem 1.2rem;
+            }
+        }
+
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .nav-link {
+                font-size: 1rem;
+                padding: 0.5rem 0.8rem;
+            }
+        }
+
+
+        /* Animations */
+
+    
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .navbar, .footer {
+                padding: 1rem 0;
+            }
+            .navbar-text, .footer-text {
+                font-size: 1rem;
+            }
+        }
+
+        /*_______________________________________________________________________________________________*/
+
+    /* Styling for the container div */
+    .col-md-4.text-end {
+        padding: 1rem; /* Basic padding for spacing */
+    }
+
+    /* Styling for the button */
+    .btn-primary {
+        background: linear-gradient(135deg, #60A5FA, #3B82F6);
+        border: none;
+        color: #ffffff;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 0.7rem 1.4rem;
+        border-radius: 6px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Hover effect for the button */
+    .btn-primary:hover {
+        background: #00b8e6; /* Slightly darker blue on hover */
+        transform: translateY(-2px); /* Subtle lift on hover */
+        color: #ffffff; /* Ensure text remains white */
+    }
+
+    /* Style for the icon inside the button */
+    .btn-primary i {
+        font-size: 1rem; /* Standard icon size */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .col-md-4.text-end {
+            text-align: center; /* Center the button on smaller screens */
+            padding: 0.5rem;
+        }
+        .btn-primary {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+
+
     </style>
+
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Sistema de Tickets</a>
+
+            <a class="navbar-brand" href="{% url 'home2' %}">
+                <img src="https://img1.wsimg.com/isteam/ip/76a2ccca-462d-47b7-979f-a7b7d8be4e5c/0008778a-baa5-42a7-83da-2b61109a6f2c.jpg" alt="TechSolutions Logo" class="navbar-logo">
+            </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                        <a class="nav-link main-content" href="{% url 'home' %}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ticket_list' %}">Tickets del sistema</a>
+                        <a class="nav-link main-content" href="{% url 'ticket_list' %}" style="white-space: normal; line-height: 1.2; padding: 0.5rem 1.4rem;">Todos los Tickets</a>
                     </li>
                     {% if user.role != 'TECHNICIAN' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'create_ticket' %}">Crear Ticket</a>
+                        <a class="nav-link main-content" href="{% url 'create_ticket' %}">Crear Ticket</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'personal_tickets' %}"><i class="fas fa-ticket-alt"></i> Mis Tickets</a>
+                        <a class="nav-link main-content" href="{% url 'personal_tickets' %}">Mis Tickets</a>
                     </li>
                     {% endif %}
                     {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
+
+
+
                     <li class="nav-item dropdown me-2">
-                        <a class="nav-link dropdown-toggle btn btn-outline-light btn-sm px-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-users"></i> Crear Usuario
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="nav-link main-content"></i> Crear Usuario
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'create_technician' %}"><i class="fas fa-wrench"></i> Crear Técnico</a></li>
@@ -75,28 +390,35 @@
                             {% endif %}
                         </ul>
                     </li>
+
+
+                    
                     {% endif %}
                     {% if user.role in 'ADMIN,SYSTEM_ADMIN' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link main-content" href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_list' %}">Usuarios</a>
+                    <li class="nav-item dropdown me-2" style="position: relative; top: 0;">
+                        <a class="nav-link main-content" href="{% url 'user_list' %}">Usuarios</a>
                     </li>
-                    <li class="nav-item me-2">
-                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="{% url 'manage_categories' %}"><i class="fas fa-tags"></i> Crear Categorías</a>
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link main-content" href="{% url 'manage_categories' %}">Gestionar Categorías</a>
                     </li>
+
                     {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" style="margin-left: auto;">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> {{ user.username }}
+                            {{ user.username }} <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'profile' %}">Mi Perfil</a></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="/admin/"><i class="fas fa-cogs"></i> Panel Admin</a></li>
+                            {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
                         </ul>
@@ -136,11 +458,9 @@
             </main>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
+    <footer class="footer">
         <div class="container">
-            <p class="mb-0">Sistema de Gestión de Tickets &copy; {% now "Y" %}</p>
+            <p class="footer-text mb-0">TechSolutions © {% now "Y" %}</p>
         </div>
     </footer>
 

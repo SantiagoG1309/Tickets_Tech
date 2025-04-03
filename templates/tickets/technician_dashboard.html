@@ -2,13 +2,13 @@
 
 {% load ticket_filters %}
 
-{% block title %}Dashboard de Técnico - Sistema de Tickets{% endblock %}
+{% block title %}Dashboard de {{ user.get_role_display }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h2 class="border-bottom pb-2">Dashboard de Técnico</h2>
+            <h2 class="border-bottom pb-2">Dashboard de {{ user.get_role_display }}</h2>
         </div>
     </div>
 
