@@ -61,7 +61,7 @@
                             <td>{{ ticket.id }}</td>
                             <td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.title }}</a></td>
                             <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
-                            <td>{{ ticket.get_category_display }}</td>
+                            <td>{{ ticket.category.name }}</td>
                             <td>
                                 {% if ticket.priority == 'HIGH' %}
                                 <span class="badge bg-danger">{{ ticket.get_priority_display }}</span>
